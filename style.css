@@ -1,0 +1,62 @@
+body {
+    font-family: 'Manjari', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.players {
+    display: flex; 
+    justify-content: center;
+    margin: 50px 20px;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1em;
+}
+
+.playerBoarder {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 15px 5px 15px;
+    margin: 20px;
+    width: 200px;
+    border: solid 1px #ccc;
+    border-radius: 20px;
+}
+
+.board {
+    display: flex;
+    justify-content: center;
+    background-color: #5271ff;
+    padding: 30px 0;
+}
+
+.board table {
+    border-spacing: 0px;
+    text-align: center;
+}
+
+.board td {
+    width: 100px;
+    height: 100px;
+    border: 3px solid #ccc;
+    margin: 0;
+}
+
+#cell1, #cell2, #cell3 {
+    border-top: none;
+}
+#cell3, #cell6, #cell9 {
+    border-right: none;
+}
+#cell7, #cell8, #cell9 {
+    border-bottom: none;
+}  
+#cell1, #cell4, #cell7 {
+    border-left: none;
+} 
+
+.restartGame {
+    display: flex;
+    justify-content: center;
+    margin: 50px 20px;
+}
