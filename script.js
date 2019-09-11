@@ -1,7 +1,11 @@
-let board;
+// global variables 
 const getBoardPosition = Array.from(document.querySelectorAll('.board td'));
+let board;
 let trackPlayersTurn = 0;
+let playerOneScore = 0;
+let playerTwoScore = 0;
 
+// array for results
 function gameBoard() {
     board = ['', '', '', '', '', '', '', '', ''];
 }
@@ -9,21 +13,24 @@ function gameBoard() {
 // respond to the player clicking a position. Check for winning combination after every play. 
 function respondToGameBoard() {
     for (let i = 0; i < getBoardPosition.length; i++) {
-        getBoardPosition[i].addEventListener('click', playersTurn, { once: true }); // find alternative to once. , { once: true }
-        getBoardPosition[i].addEventListener('click', updateGameBoard);
-        getBoardPosition[i].addEventListener('click', findWinner);
+        getBoardPosition[i].addEventListener('click', playersTurn); // find alternative to once. , { once: true }
     }
 }
 
-// track players turn and return either X or O. This gets called from the respondToGameBoard function. 
+// track players turn and adds either X or O to game board board.
 function playersTurn() {
-    if (trackPlayersTurn % 2 === 0) {
-        this.textContent = 'X';
-        trackPlayersTurn++
-    } else {
-        this.textContent = 'O';
-        trackPlayersTurn++;
-    };
+    if (this.textContent === '') {     
+        if (trackPlayersTurn % 2 === 0) {
+            this.textContent = 'X';
+            trackPlayersTurn++
+        } else {
+            this.textContent = 'O';
+            trackPlayersTurn++;
+        };
+        updateGameBoard();
+        findWinner();
+        draw();
+    }
 }
 
 function updateGameBoard() {
@@ -51,25 +58,41 @@ function findWinner() {
 }
 
 function announceWinner() {
-    let playerOne = 0;
-    let playerTwo = 0;
+    const playerOne = "Player One";
+    const playerTwo = "Player Two";
     const playerOneCurrentScore = document.getElementById('playerOneScore');
     const playerTwoCurrentScore = document.getElementById('playerTwoScore');
 
     if (trackPlayersTurn % 2 !== 0) {
-        playerOne++;
-        playerOneCurrentScore.textContent = playerOne;
-        winnerScreen();
+        playerOneScore++;
+        playerOneCurrentScore.textContent = playerOneScore;
+        resultsScreen(playerOne);
     } else {
-        playerTwo++;
-        playerTwoCurrentScore.textContent = playerTwo;
-        winnerScreen();
+        playerTwoScore++;
+        playerTwoCurrentScore.textContent = playerTwoScore;
+        resultsScreen(playerTwo);
+    }
+    gameBoard();
+    resetGameBoard();
+}
+
+function draw() {
+    if (board.includes('') === false) {
+        alert(`Draw`);
+        gameBoard();
+        resetGameBoard();
     }
 }
 
-function winnerScreen() {
-
+function resultsScreen(player) {
+    alert(`${player} Wins`)
 };
+
+function resetGameBoard() {
+    for (let i = 0; i < getBoardPosition.length; i++) {
+        getBoardPosition[i].textContent = '';
+    }
+}
 
 function highlightPlayer() {
     const playerOne = document.getElementById('playerOne');
@@ -78,7 +101,3 @@ function highlightPlayer() {
 
 gameBoard();
 respondToGameBoard();
-
-
-console.log(getBoardPosition)
-console.log(board)
