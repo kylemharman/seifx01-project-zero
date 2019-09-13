@@ -1,5 +1,7 @@
 // global variables 
 const getBoardPosition = Array.from(document.querySelectorAll('.board td'));
+const crossIcon = document.querySelector('.crossIcon');
+const circleIcon = document.querySelector('.circleIcon');
 let board;
 let trackPlayersTurn = 0;
 let playerOneScore = 0;
@@ -15,22 +17,18 @@ function respondToGameBoard() {
     for (let i = 0; i < getBoardPosition.length; i++) {
         getBoardPosition[i].addEventListener('click', playersTurn);
     }
-    document.getElementById('restartGame').addEventListener('click', resetGameBoard);
+    document.querySelector('.restartGame').addEventListener('click', resetGameBoard);
 }
 
 // track players turn and adds either X or O to game board board.
 function playersTurn() {
-    if (this.textContent === '') {
+    if (this.innerHTML === '') {
         if (trackPlayersTurn % 2 === 0) {
-            this.textContent = 'X';
+            this.innerHTML = crossIcon.innerHTML;
             trackPlayersTurn++
-            playerOne.style.boxShadow = '0 4px 8px 0 rgba(82, 113, 255, 0.8)';
-            playerTwo.style.boxShadow = 'none';
         } else {
-            this.textContent = 'O';
+            this.innerHTML = circleIcon.innerHTML;
             trackPlayersTurn++;
-            playerTwo.style.boxShadow = '0 4px 8px 0 rgba(82, 113, 255, 0.8)';
-            playerOne.style.boxShadow = 'none';
         };
         updateGameBoard();
         findWinner();
@@ -40,9 +38,9 @@ function playersTurn() {
 
 function updateGameBoard() {
     for (let i = 0; i < getBoardPosition.length; i++) {
-        if (getBoardPosition[i].textContent === "X") {
+        if (getBoardPosition[i].innerHTML === crossIcon.innerHTML) {
             board[i] = true;
-        } else if (getBoardPosition[i].textContent === "O") {
+        } else if (getBoardPosition[i].innerHTML === circleIcon.innerHTML) {
             board[i] = false;
         }
     }
@@ -64,19 +62,20 @@ function findWinner() {
 }
 
 function announceWinner() {
-    const playerOne = "X WINS";
-    const playerTwo = "O WINS";
-    const playerOneCurrentScore = document.getElementById('playerOneScore');
-    const playerTwoCurrentScore = document.getElementById('playerTwoScore');
-
+    const playerOne = crossIcon.innerHTML;
+    const playerTwo = circleIcon.innerHTML;
+    const playerOneCurrentScore = document.querySelector('.playerOneScore');
+    const playerTwoCurrentScore = document.querySelector('.playerTwoScore');
+    const wins = 'WINS'
+    
     if (trackPlayersTurn % 2 !== 0) {
         playerOneScore++;
         playerOneCurrentScore.textContent = playerOneScore;
-        resultsOverlay(playerOne)
+        resultsOverlay(playerOne, wins)
     } else {
         playerTwoScore++;
         playerTwoCurrentScore.textContent = playerTwoScore;
-        resultsOverlay(playerTwo)
+        resultsOverlay(playerTwo, wins)
     }
     resetGameBoard();
 }
@@ -84,16 +83,25 @@ function announceWinner() {
 function draw() {
     const gameTied = 'DRAW';
     if (board.includes('') === false) {
-        resultsOverlay(gameTied);
+        resultsOverlay('',gameTied);
         resetGameBoard();
     }
 }
 
+function resetGameBoard() {
+    for (let i = 0; i < getBoardPosition.length; i++) {
+        getBoardPosition[i].innerHTML = '';
+    }
+    gameBoard();
+}
+
+
 // Overlay to annouce who won the game or if the game was a tie. 
-function resultsOverlay(result) {
-    const overlay = document.getElementById('overlay');
+function resultsOverlay(icon, result) {
+    const overlay = document.querySelector('.overlay');
     overlay.style.display = 'flex';
-    document.getElementById('resultOverlayText').innerText = result;
+    document.querySelector('.resultOverlayIcon').innerHTML = icon;
+    document.querySelector('.resultOverlayText').innerHTML = result;
     overlay.addEventListener('click', turnResultsOverlayOff);
 }
 
@@ -101,39 +109,34 @@ function turnResultsOverlayOff() {
     this.style.display = 'none';
 }
 
-function resetGameBoard() {
-    for (let i = 0; i < getBoardPosition.length; i++) {
-        getBoardPosition[i].textContent = '';
-    }
-    gameBoard();
+
+// Animations Start Here
+
+// this function applies an animation to a selected node.
+function animateCSS(element, animationName, background, duration) {
+    const animate = document.querySelector(element)
+    animate.classList.add('animated', animationName, background, duration)
+}
+// this function removes an animation to a selected node.
+function handleAnimationEnd(element, animationName, background, duration) {
+    const animate = document.querySelector(element)
+    animate.classList.remove('animated', animationName, background, duration)
 }
 
+// Animate players turn - background colour and animation.
 function highlightPlayer() {
-    const playerOne = document.querySelector('.playerHighlightOne');
-    const playerTwo = document.querySelector('.playerHighlightTwo');
     if (trackPlayersTurn % 2 === 0) {
-        playerOne.style.boxShadow = '0 4px 8px 0 rgba(82, 113, 255, 0.8)';
-        playerTwo.style.boxShadow = 'none';
+        animateCSS('.playerOne', 'pulse', 'playerBackground', 'infinite');
+        handleAnimationEnd('.playerTwo', 'pulse', 'playerBackground', 'infinite');
     } else {
-        playerTwo.style.boxShadow = '0 4px 8px 0 rgba(82, 113, 255, 0.8)';
-        playerOne.style.boxShadow = 'none';
+        animateCSS('.playerTwo', 'pulse', 'playerBackground', 'infinite');
+        handleAnimationEnd('.playerOne', 'pulse', 'playerBackground', 'infinite');
     };
 }
 
-function animateCSS(element, animationName, callback) {
-    const animate = document.querySelector(element)
-    animate.classList.add('animated', animationName)
+// Animations End Here
 
-    function handleAnimationEnd() {
-        animate.classList.remove('animated', animationName)
-        animate.removeEventListener('animationend', handleAnimationEnd)
-
-        if (typeof callback === 'function') callback()
-    }
-    
-    animate.addEventListener('animationend', handleAnimationEnd)
-}
 
 gameBoard();
-highlightPlayer()
+highlightPlayer();
 respondToGameBoard();
