@@ -1,52 +1,73 @@
 // global variables 
 const getBoardPosition = Array.from(document.querySelectorAll('.board td'));
-const crossIcon = document.querySelector('.crossIcon');
-const circleIcon = document.querySelector('.circleIcon');
+const crossIcon = document.querySelector('.crossIcon').innerHTML;
+const circleIcon = document.querySelector('.circleIcon').innerHTML;
 let board;
 let trackPlayersTurn = 0;
 let playerOneScore = 0;
 let playerTwoScore = 0;
+let computer = true;
+let winner = false;
 
-// array for results
+// GAME LOGIC STARTS HERE
+// array to store results
 function gameBoard() {
     board = ['', '', '', '', '', '', '', '', ''];
 }
 
-// respond to the player clicking a position. Check for winning combination after every play. 
+// respond to the player clicking a position and the restart button.
 function respondToGameBoard() {
     for (let i = 0; i < getBoardPosition.length; i++) {
         getBoardPosition[i].addEventListener('click', playersTurn);
     }
-    document.querySelector('.restartGame').addEventListener('click', resetGameBoard);
 }
 
-// track players turn and adds either X or O to game board board.
+// track players turn and adds either X or O to game board board. Check for win or draw after every play.
 function playersTurn() {
     if (this.innerHTML === '') {
         if (trackPlayersTurn % 2 === 0) {
-            this.innerHTML = crossIcon.innerHTML;
+            this.innerHTML = crossIcon;
             trackPlayersTurn++
-        } else {
-            this.innerHTML = circleIcon.innerHTML;
+            setTimeout(computerMode, 500);
+        } else if (computer === false) {
+            this.innerHTML = circleIcon;
             trackPlayersTurn++;
-        };
+        }
         updateGameBoard();
         findWinner();
         draw();
     }
 }
+function computerMode() {
+    if (computer === true && trackPlayersTurn % 2 === 1) {
+        let emptySpaces = [];
+        for (let i = 0; i < getBoardPosition.length; i++) {
+            if (getBoardPosition[i].innerHTML === '') 
+                emptySpaces.push(i)
+        } if (emptySpaces.length > 0) {
+            let randomSpace = Math.floor(Math.random() * emptySpaces.length)
+            let randomValue = emptySpaces[randomSpace];
+            getBoardPosition[randomValue].innerHTML = circleIcon
+        }
+        if (winner === false) trackPlayersTurn++
 
+        console.log('track players turn ' + trackPlayersTurn)
+    }
+}
+
+// updates the results array with true for X and false for O
 function updateGameBoard() {
     for (let i = 0; i < getBoardPosition.length; i++) {
-        if (getBoardPosition[i].innerHTML === crossIcon.innerHTML) {
+        if (getBoardPosition[i].innerHTML === crossIcon) {
             board[i] = true;
-        } else if (getBoardPosition[i].innerHTML === circleIcon.innerHTML) {
+        } else if (getBoardPosition[i].innerHTML === circleIcon) {
             board[i] = false;
         }
     }
     highlightPlayer();
+    console.log('gameboard updated')
 }
-
+//checks for a winner
 function findWinner() {
     if (
         (board[0] && board[1] && board[2] || board[0] === false && board[1] === false && board[2] === false) ||
@@ -57,60 +78,82 @@ function findWinner() {
         (board[2] && board[5] && board[8] || board[2] === false && board[5] === false && board[8] === false) ||
         (board[0] && board[4] && board[8] || board[0] === false && board[4] === false && board[8] === false) ||
         (board[2] && board[4] && board[6] || board[2] === false && board[4] === false && board[6] === false)) {
-        announceWinner();
+        winner = true;
+        setTimeout(announceWinner, 500)
     }
 }
-
+// announces winner with an overlay
 function announceWinner() {
-    const playerOne = crossIcon.innerHTML;
-    const playerTwo = circleIcon.innerHTML;
-    const playerOneCurrentScore = document.querySelector('.playerOneScore');
-    const playerTwoCurrentScore = document.querySelector('.playerTwoScore');
     const wins = 'WINS'
-    
     if (trackPlayersTurn % 2 !== 0) {
         playerOneScore++;
-        playerOneCurrentScore.textContent = playerOneScore;
-        resultsOverlay(playerOne, wins)
+        resultsOverlay(crossIcon, wins)
     } else {
         playerTwoScore++;
-        playerTwoCurrentScore.textContent = playerTwoScore;
-        resultsOverlay(playerTwo, wins)
+        resultsOverlay(circleIcon, wins)
     }
+    updatePlayersScore();
     resetGameBoard();
 }
+// updates the players score
+function updatePlayersScore() {
+    const playerOneCurrentScore = document.querySelector('.playerOneScore');
+    const playerTwoCurrentScore = document.querySelector('.playerTwoScore');
+    playerOneCurrentScore.textContent = playerOneScore;
+    playerTwoCurrentScore.textContent = playerTwoScore;
+}
 
+// announces a draw with overlay
 function draw() {
+    const drawIcons = [crossIcon, circleIcon]
     const gameTied = 'DRAW';
     if (board.includes('') === false) {
-        resultsOverlay('',gameTied);
+        resultsOverlay(drawIcons, gameTied);
         resetGameBoard();
     }
 }
-
+// clears the game board and results array for a new round
 function resetGameBoard() {
     for (let i = 0; i < getBoardPosition.length; i++) {
         getBoardPosition[i].innerHTML = '';
     }
     gameBoard();
+    winner = false;
 }
 
+function resetScores() {
+    playerOneScore = 0;
+    playerTwoScore = 0;
+    updatePlayersScore();
+}
 
 // Overlay to annouce who won the game or if the game was a tie. 
 function resultsOverlay(icon, result) {
     const overlay = document.querySelector('.overlay');
     overlay.style.display = 'flex';
-    document.querySelector('.resultOverlayIcon').innerHTML = icon;
+    if (icon[0] === crossIcon) {
+        document.querySelector('.resultOverlayIcon').innerHTML = icon.join('');
+    } else {
+        document.querySelector('.resultOverlayIcon').innerHTML = icon;
+    }
     document.querySelector('.resultOverlayText').innerHTML = result;
     overlay.addEventListener('click', turnResultsOverlayOff);
-}
+    setTimeout(turnResultsOverlayOff, 2200);
+    animateCSS('.overlay', 'fadeIn');
 
+}
 function turnResultsOverlayOff() {
-    this.style.display = 'none';
+    handleAnimationEnd('.overlay', 'fadeIn');
+    animateCSS('.overlay', 'fadeOut', '.removeOverlay', 'faster')
+    setTimeout(clearAnimationClasses, 500);
 }
-
-
-// Animations Start Here
+function clearAnimationClasses() {
+    const overlay = document.querySelector('.overlay');
+    handleAnimationEnd('.overlay', 'fadeOut', '.removeOverlay', 'faster')
+    overlay.style.display = 'none';
+}
+// GAME LOGIC ENDS HERE
+//  ANIMATIONS START HERE
 
 // this function applies an animation to a selected node.
 function animateCSS(element, animationName, background, duration) {
@@ -134,9 +177,21 @@ function highlightPlayer() {
     };
 }
 
-// Animations End Here
+// open settings nav
+function openNav() {
+    document.getElementById("mySidenav").style.width = "300px";
+    document.getElementById("main").style.marginLeft = "300px";
+}
+// close settings nav
+function closeNav() {
+    document.getElementById("mySidenav").style.width = "0px";
+    document.getElementById("main").style.marginLeft = "0px";
+}
+
+// ANIMATIONS END HERE
 
 
 gameBoard();
+computerMode()
 highlightPlayer();
 respondToGameBoard();
