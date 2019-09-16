@@ -3,16 +3,28 @@ const getBoardPosition = Array.from(document.querySelectorAll('.board td'));
 const crossIcon = document.querySelector('.crossIcon').innerHTML;
 const circleIcon = document.querySelector('.circleIcon').innerHTML;
 let board;
-let trackPlayersTurn = 0;
+let trackPlayersTurn = true;
 let playerOneScore = 0;
 let playerTwoScore = 0;
 let computer = true;
-let winner = false;
 
 // GAME LOGIC STARTS HERE
 // array to store results
 function gameBoard() {
     board = ['', '', '', '', '', '', '', '', ''];
+}
+
+// updates the results array with true for X and false for O
+function updateGameBoard() {
+    for (let i = 0; i < getBoardPosition.length; i++) {
+        if (getBoardPosition[i].innerHTML === crossIcon) {
+            board[i] = true;
+            console.log("update gameboard with X")
+        } else if (getBoardPosition[i].innerHTML === circleIcon) {
+            board[i] = false;
+            console.log("update gameboard with O")
+        }
+    } 
 }
 
 // respond to the player clicking a position and the restart button.
@@ -25,21 +37,26 @@ function respondToGameBoard() {
 // track players turn and adds either X or O to game board board. Check for win or draw after every play.
 function playersTurn() {
     if (this.innerHTML === '') {
-        if (trackPlayersTurn % 2 === 0) {
+        if (trackPlayersTurn) {
             this.innerHTML = crossIcon;
-            trackPlayersTurn++
-            setTimeout(computerMode, 500);
+            trackPlayersTurn = false;
+            console.log("players turn update from x")
+            console.log("track players turn x " + trackPlayersTurn)
+            
         } else if (computer === false) {
             this.innerHTML = circleIcon;
-            trackPlayersTurn++;
+            trackPlayersTurn = true;
         }
-        updateGameBoard();
-        findWinner();
-        draw();
+    updateGameBoard();
+    findWinner();
+    draw();
+    highlightPlayer();
+    setTimeout(computerLogic, 1000);
+    console.log(board)
     }
 }
-function computerMode() {
-    if (computer === true && trackPlayersTurn % 2 === 1) {
+function computerLogic() {
+    if (computer && !trackPlayersTurn) {
         let emptySpaces = [];
         for (let i = 0; i < getBoardPosition.length; i++) {
             if (getBoardPosition[i].innerHTML === '') 
@@ -49,24 +66,31 @@ function computerMode() {
             let randomValue = emptySpaces[randomSpace];
             getBoardPosition[randomValue].innerHTML = circleIcon
         }
-        if (winner === false) trackPlayersTurn++
-
-        console.log('track players turn ' + trackPlayersTurn)
     }
-}
-
-// updates the results array with true for X and false for O
-function updateGameBoard() {
-    for (let i = 0; i < getBoardPosition.length; i++) {
-        if (getBoardPosition[i].innerHTML === crossIcon) {
-            board[i] = true;
-        } else if (getBoardPosition[i].innerHTML === circleIcon) {
-            board[i] = false;
-        }
-    }
+    trackPlayersTurn = true;
+    console.log("track players turn o " + trackPlayersTurn)
+    updateGameBoard();
+    findWinner();
+    draw();
     highlightPlayer();
-    console.log('gameboard updated')
+    console.log("computer logic gameboard update")
+    console.log("computer logic run finished")
+    console.log(board)   
 }
+
+function computerMode() {
+    document.querySelector('.multiplayerMode').classList.remove('settingsMenuSelected') 
+    document.querySelector('.computerMode').classList.add('settingsMenuSelected')
+    computer = true;
+}
+
+function multiplayerMode() {
+    document.querySelector('.computerMode').classList.remove('settingsMenuSelected') 
+    document.querySelector('.multiplayerMode').classList.add('settingsMenuSelected')
+    computer = false;
+}
+
+
 //checks for a winner
 function findWinner() {
     if (
@@ -78,14 +102,16 @@ function findWinner() {
         (board[2] && board[5] && board[8] || board[2] === false && board[5] === false && board[8] === false) ||
         (board[0] && board[4] && board[8] || board[0] === false && board[4] === false && board[8] === false) ||
         (board[2] && board[4] && board[6] || board[2] === false && board[4] === false && board[6] === false)) {
-        winner = true;
         setTimeout(announceWinner, 500)
+        console.log("find winner executed")
+        return true;
+        
     }
 }
 // announces winner with an overlay
 function announceWinner() {
     const wins = 'WINS'
-    if (trackPlayersTurn % 2 !== 0) {
+    if (!trackPlayersTurn) {
         playerOneScore++;
         resultsOverlay(crossIcon, wins)
     } else {
@@ -110,6 +136,7 @@ function draw() {
     if (board.includes('') === false) {
         resultsOverlay(drawIcons, gameTied);
         resetGameBoard();
+        // return true;
     }
 }
 // clears the game board and results array for a new round
@@ -118,7 +145,7 @@ function resetGameBoard() {
         getBoardPosition[i].innerHTML = '';
     }
     gameBoard();
-    winner = false;
+    computerLogic();
 }
 
 function resetScores() {
@@ -168,7 +195,7 @@ function handleAnimationEnd(element, animationName, background, duration) {
 
 // Animate players turn - background colour and animation.
 function highlightPlayer() {
-    if (trackPlayersTurn % 2 === 0) {
+    if (trackPlayersTurn) {
         animateCSS('.playerOne', 'pulse', 'playerBackground', 'infinite');
         handleAnimationEnd('.playerTwo', 'pulse', 'playerBackground', 'infinite');
     } else {
@@ -192,6 +219,6 @@ function closeNav() {
 
 
 gameBoard();
-computerMode()
+computerLogic();
 highlightPlayer();
 respondToGameBoard();
