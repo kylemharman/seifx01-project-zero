@@ -24,8 +24,9 @@ function updateGameBoard() {
             board[i] = false;
             console.log("update gameboard with O")
         }
-    } 
+    }
 }
+
 
 // respond to the player clicking a position and the restart button.
 function respondToGameBoard() {
@@ -42,24 +43,24 @@ function playersTurn() {
             trackPlayersTurn = false;
             console.log("players turn update from x")
             console.log("track players turn x " + trackPlayersTurn)
-            
+
         } else if (computer === false) {
             this.innerHTML = circleIcon;
             trackPlayersTurn = true;
         }
-    updateGameBoard();
-    findWinner();
-    draw();
-    highlightPlayer();
-    setTimeout(computerLogic, 1000);
-    console.log(board)
+        updateGameBoard();
+        findWinner();
+        draw();
+        highlightPlayer();
+        if (computer) setTimeout(computerLogic, 1000);
+        console.log(board)
     }
 }
 function computerLogic() {
     if (computer && !trackPlayersTurn) {
         let emptySpaces = [];
         for (let i = 0; i < getBoardPosition.length; i++) {
-            if (getBoardPosition[i].innerHTML === '') 
+            if (getBoardPosition[i].innerHTML === '')
                 emptySpaces.push(i)
         } if (emptySpaces.length > 0) {
             let randomSpace = Math.floor(Math.random() * emptySpaces.length)
@@ -67,25 +68,26 @@ function computerLogic() {
             getBoardPosition[randomValue].innerHTML = circleIcon
         }
     }
-    trackPlayersTurn = true;
-    console.log("track players turn o " + trackPlayersTurn)
     updateGameBoard();
     findWinner();
     draw();
+    trackPlayersTurn = true;
     highlightPlayer();
+    
     console.log("computer logic gameboard update")
     console.log("computer logic run finished")
-    console.log(board)   
+    console.log(board)
+    console.log("track players turn o " + trackPlayersTurn)
 }
 
 function computerMode() {
-    document.querySelector('.multiplayerMode').classList.remove('settingsMenuSelected') 
+    document.querySelector('.multiplayerMode').classList.remove('settingsMenuSelected')
     document.querySelector('.computerMode').classList.add('settingsMenuSelected')
     computer = true;
 }
 
 function multiplayerMode() {
-    document.querySelector('.computerMode').classList.remove('settingsMenuSelected') 
+    document.querySelector('.computerMode').classList.remove('settingsMenuSelected')
     document.querySelector('.multiplayerMode').classList.add('settingsMenuSelected')
     computer = false;
 }
@@ -104,8 +106,6 @@ function findWinner() {
         (board[2] && board[4] && board[6] || board[2] === false && board[4] === false && board[6] === false)) {
         setTimeout(announceWinner, 500)
         console.log("find winner executed")
-        return true;
-        
     }
 }
 // announces winner with an overlay
@@ -136,7 +136,6 @@ function draw() {
     if (board.includes('') === false) {
         resultsOverlay(drawIcons, gameTied);
         resetGameBoard();
-        // return true;
     }
 }
 // clears the game board and results array for a new round
@@ -145,7 +144,7 @@ function resetGameBoard() {
         getBoardPosition[i].innerHTML = '';
     }
     gameBoard();
-    computerLogic();
+    if (computer) setTimeout(computerLogic, 1000);
 }
 
 function resetScores() {
@@ -222,3 +221,16 @@ gameBoard();
 computerLogic();
 highlightPlayer();
 respondToGameBoard();
+
+// getting data from db
+// db.collection('scores').get().then((snapshot) => {
+//     snapshot.docs.forEach(doc => {
+//         console.log(doc.data())
+//     })
+// })
+
+    // submitting data to db
+    // db.collection('scores').add({
+    //     playerOneScore: playerOneScore,
+    //     playerTwoScore: playerTwoScore
+    // })
