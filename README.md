@@ -12,6 +12,6 @@ Icons from: Font Awesome\
 Animations with: animate.css and CSS 
 
 ## V2 Upgrades
-More intelligent AI - implement the Minimax algorithm for a more challenging computer opponent.\
-Play multiplayer over a network - link game to a database such as Firebase.\
-Have a ‘best of mode’, allow the user to select how many rounds to play.\
+* More intelligent AI - implement the Minimax algorithm for a more challenging computer opponent.\
+* Play multiplayer over a network - link game to a database such as Firebase.\
+* Have a ‘best of mode’, allow the user to select how many rounds to play.
