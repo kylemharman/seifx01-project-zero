@@ -55,7 +55,8 @@ function computerLogic() {
         for (let i = 0; i < getBoardPosition.length; i++) {
             if (getBoardPosition[i].innerHTML === '')
                 emptySpaces.push(i)
-        } if (emptySpaces.length > 0) {
+        }
+        if (emptySpaces.length > 0) {
             let randomSpace = Math.floor(Math.random() * emptySpaces.length)
             let randomValue = emptySpaces[randomSpace];
             getBoardPosition[randomValue].innerHTML = circleIcon
