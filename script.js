@@ -10,23 +10,18 @@ let computer = true;
 
 // GAME LOGIC STARTS HERE
 // array to store results
-function gameBoard() {
-    board = ['', '', '', '', '', '', '', '', ''];
-}
+const resultsArr = () => board = ['', '', '', '', '', '', '', '', ''];
 
 // updates the results array with true for X and false for O
 function updateGameBoard() {
     for (let i = 0; i < getBoardPosition.length; i++) {
         if (getBoardPosition[i].innerHTML === crossIcon) {
             board[i] = true;
-            console.log("update gameboard with X")
         } else if (getBoardPosition[i].innerHTML === circleIcon) {
             board[i] = false;
-            console.log("update gameboard with O")
         }
     }
 }
-
 
 // respond to the player clicking a position and the restart button.
 function respondToGameBoard() {
@@ -41,9 +36,6 @@ function playersTurn() {
         if (trackPlayersTurn) {
             this.innerHTML = crossIcon;
             trackPlayersTurn = false;
-            console.log("players turn update from x")
-            console.log("track players turn x " + trackPlayersTurn)
-
         } else if (computer === false) {
             this.innerHTML = circleIcon;
             trackPlayersTurn = true;
@@ -53,9 +45,10 @@ function playersTurn() {
         draw();
         highlightPlayer();
         if (computer) setTimeout(computerLogic, 1000);
-        console.log(board)
     }
 }
+
+// uses finds empty spaces on gameboard and randomly places an O into one of those spaces
 function computerLogic() {
     if (computer && !trackPlayersTurn) {
         let emptySpaces = [];
@@ -73,25 +66,21 @@ function computerLogic() {
     draw();
     trackPlayersTurn = true;
     highlightPlayer();
-    
-    console.log("computer logic gameboard update")
-    console.log("computer logic run finished")
-    console.log(board)
-    console.log("track players turn o " + trackPlayersTurn)
 }
 
+// makes the computer mode icon in the menu blue and initiates computerLogic
 function computerMode() {
     document.querySelector('.multiplayerMode').classList.remove('settingsMenuSelected')
     document.querySelector('.computerMode').classList.add('settingsMenuSelected')
     computer = true;
 }
 
+// makes the multiplayer mode icon in the menu blue and initiates turns off computer mode
 function multiplayerMode() {
     document.querySelector('.computerMode').classList.remove('settingsMenuSelected')
     document.querySelector('.multiplayerMode').classList.add('settingsMenuSelected')
     computer = false;
 }
-
 
 //checks for a winner
 function findWinner() {
@@ -105,9 +94,9 @@ function findWinner() {
         (board[0] && board[4] && board[8] || board[0] === false && board[4] === false && board[8] === false) ||
         (board[2] && board[4] && board[6] || board[2] === false && board[4] === false && board[6] === false)) {
         setTimeout(announceWinner, 500)
-        console.log("find winner executed")
     }
 }
+
 // announces winner with an overlay
 function announceWinner() {
     const wins = 'WINS'
@@ -121,6 +110,7 @@ function announceWinner() {
     updatePlayersScore();
     resetGameBoard();
 }
+
 // updates the players score
 function updatePlayersScore() {
     const playerOneCurrentScore = document.querySelector('.playerOneScore');
@@ -138,15 +128,17 @@ function draw() {
         resetGameBoard();
     }
 }
+
 // clears the game board and results array for a new round
 function resetGameBoard() {
     for (let i = 0; i < getBoardPosition.length; i++) {
         getBoardPosition[i].innerHTML = '';
     }
-    gameBoard();
+    resultsArr();
     if (computer) setTimeout(computerLogic, 1000);
 }
 
+// clears score
 function resetScores() {
     playerOneScore = 0;
     playerTwoScore = 0;
@@ -166,26 +158,31 @@ function resultsOverlay(icon, result) {
     overlay.addEventListener('click', turnResultsOverlayOff);
     setTimeout(turnResultsOverlayOff, 2200);
     animateCSS('.overlay', 'fadeIn');
-
 }
+
+// turns off the overlay
 function turnResultsOverlayOff() {
     handleAnimationEnd('.overlay', 'fadeIn');
     animateCSS('.overlay', 'fadeOut', '.removeOverlay', 'faster')
     setTimeout(clearAnimationClasses, 500);
 }
+
+// clears the overlay
 function clearAnimationClasses() {
     const overlay = document.querySelector('.overlay');
     handleAnimationEnd('.overlay', 'fadeOut', '.removeOverlay', 'faster')
     overlay.style.display = 'none';
 }
-// GAME LOGIC ENDS HERE
-//  ANIMATIONS START HERE
 
+// GAME LOGIC ENDS HERE
+
+//  ANIMATIONS START HERE
 // this function applies an animation to a selected node.
 function animateCSS(element, animationName, background, duration) {
     const animate = document.querySelector(element)
     animate.classList.add('animated', animationName, background, duration)
 }
+
 // this function removes an animation to a selected node.
 function handleAnimationEnd(element, animationName, background, duration) {
     const animate = document.querySelector(element)
@@ -204,33 +201,15 @@ function highlightPlayer() {
 }
 
 // open settings nav
-function openNav() {
-    document.getElementById("mySidenav").style.width = "300px";
-    document.getElementById("main").style.marginLeft = "300px";
-}
+const openNav = () => document.getElementById("mySidenav").style.width = "300px";
+
 // close settings nav
-function closeNav() {
-    document.getElementById("mySidenav").style.width = "0px";
-    document.getElementById("main").style.marginLeft = "0px";
-}
+const closeNav = () => document.getElementById("mySidenav").style.width = "0px";
 
 // ANIMATIONS END HERE
 
-
-gameBoard();
+// CALL FUNCTIONS
+resultsArr();
 computerLogic();
 highlightPlayer();
 respondToGameBoard();
-
-// getting data from db
-// db.collection('scores').get().then((snapshot) => {
-//     snapshot.docs.forEach(doc => {
-//         console.log(doc.data())
-//     })
-// })
-
-    // submitting data to db
-    // db.collection('scores').add({
-    //     playerOneScore: playerOneScore,
-    //     playerTwoScore: playerTwoScore
-    // })

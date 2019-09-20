@@ -28,6 +28,11 @@ body {
     }
 }
 
+.openCloseSideNav {
+    width: 300px;
+    margin-left: 300px;
+}
+
 .sidenav .closebtn {
     position: absolute;
     top: 0;
@@ -118,31 +123,29 @@ body {
 
 .board table {
     border-spacing: 0px;
-    text-align: center;
-    line-height: 10px;
 }
 
 .board td {
     width: 100px;
     height: 100px;
-    border: 6px solid #304ed6;
-    margin: 0;
-    color: #fff;
-    font-size: 50px;
-    font-weight: 900;
+    border: 3px solid #304ed6;
+    display: inline-flex;
+    justify-content: center;
 }
 
-#cell1, #cell3, #cell7, #cell9 {
-    border: none;
-}
-
-#cell2, #cell8 {
+#cell1, #cell2, #cell3 {
     border-top: none;
+}
+
+#cell3, #cell6, #cell9 {
+    border-right: none;
+}
+
+#cell7, #cell8, #cell9 {
     border-bottom: none;
 }
 
-#cell4, #cell6 {
-    border-right: none;
+#cell1, #cell4, #cell7 {
     border-left: none;
 }
 
