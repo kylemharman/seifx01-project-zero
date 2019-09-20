@@ -1,9 +1,9 @@
 # seifx01-project-zero
 A Javascript Tic Tac Toe Game. 
 
-Play game here: https://kylemharman.github.io/seifx01-project-zero/ \
+![Image of game](https://octodex.github.com/images/yaktocat.png)
 
-
+Play game here: https://kylemharman.github.io/seifx01-project-zero/ 
 
 ## Description
 A simple Tic Tac Toe game, designed to be minimalistic and easy to play. The game features a very simplistic computer mode which the game starts in. The user can change the game mode to multiplayer to play against a friend, this can be changed in the settings menu. 
