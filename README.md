@@ -1,7 +1,7 @@
 # seifx01-project-zero
 A Javascript Tic Tac Toe Game. 
 
-![Image of game](https://octodex.github.com/images/yaktocat.png)
+![Image of game](https://github.com/kylemharman/seifx01-project-zero/blob/master/img/game-screen-shot.png)
 
 Play game here: https://kylemharman.github.io/seifx01-project-zero/ 
 
